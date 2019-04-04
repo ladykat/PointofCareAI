@@ -1,0 +1,211 @@
+/* Use fact, rule, query Model: Medical Expert System using Prolog by KAT USOP*/
+help :- write('To start the Point-of-Care Expert System, type: start.').
+
+/*type next to continue...*/
+next:- prompt(_, 'Type "next" to continue...'), read(Response), 
+             (Response == next, write('cool, let us begin.type [ diagnose. ] to begin'), next). 
+
+
+/* Input / Output */
+
+/* biodata: female or male? */
+
+start:- prompt(_, 'What is the gender of your patient?'), read(Gender), 
+    (Gender == female -> pregnantOrNot; Gender == male ->  diagnose, start).
+    
+
+/* if female is pregnant ..*/
+
+pregnantOrNot:- prompt(_, 'Is your patient pregnant? yes or no'), read(Response), 
+    /* if pregnant, im sorry contact doctor immediately */
+    (Response == yes, clear, writeln('This system is not suitable for your patient. Please contact a doctor immediately!');
+    writeln(' Lets begin diagnosis.'), nl, clear, diagnose, pregnantOrNot).
+    
+/* clear the prompt */
+clear :- prompt(_, 'yes or no').
+
+/* Description of the Relationships of common Symptoms and disease: fever, diarrhea, nausea, aches */
+
+family(bacterial_pneumonia, fever).
+family(viral_pneumonia, fever).
+family(flu, fever).
+family(chickenpox, fever).
+family(salmonella, fever).
+family(shigella, fever).
+family(mumps, fever).
+
+family(salmonella, diarrhea).
+family(norovirus, diarrhea).
+family(shigella, diarrhea).
+
+
+family(bacterial_pneumonia, nausea).
+family(viral_pneumonia, nausea).
+family(ebola, nausea).
+family(salmonella, nausea).
+family(hepatitis_A, nausea).
+family(norovirus, nausea).
+
+family(bacterial_pneumonia, aches).
+family(viral_pneumonia, aches).
+family(flu, aches).
+family(ebola, aches).
+family(cold, aches).
+family(salmonella, aches).
+family(hepatitis_A, aches).
+family(shigella, aches).
+family(mumps, aches).
+
+/* Query: Diseases with common with that symptom... */
+
+/* Classification KB! based on microbial antigens: viral, bacterial, fungal, parasitic*/
+
+/*viral*/
+
+diseaseBelongsTo(viral_pneumonia, viral).
+diseaseBelongsTo(ebola, viral).
+diseaseBelongsTo(norovirus, viral).
+diseaseBelongsTo(cold, viral).
+diseaseBelongsTo(measles, viral).
+diseaseBelongsTo(chickenpox, viral).
+diseaseBelongsTo(hepatitis_A, viral).
+diseaseBelongsTo(pink_eye, viral).
+diseaseBelongsTo(mumps, viral).
+diseaseBelongsTo(flu, viral).
+/*bacterial*/
+diseaseBelongsTo(salmonella, bacterial).
+diseaseBelongsTo(shigella, bacterial).
+diseaseBelongsTo(bacterial_pneumonia, bacterial).
+
+/*fungal*/
+diseaseBelongsTo(ringworm, fungal).
+
+
+/*parasitic*/
+diseaseBelongsTo(scabies,parasitic).
+
+
+
+
+
+
+/*user input diagnosis, start by command: diagnose. */
+diagnose:- 
+    
+    writeln('Disclaimer: This primary symptom diagnosis engine for infectious diseases is for educational purposes only. – Kat Usop '),
+    nl,
+    /*inquire(Age Category),*/
+    /*inquire(Gender)*/
+    /*inquire()*/
+    postulate(Disease),
+    write('You may have: '),
+    write(Disease),
+    write(', if symptoms persist please contact your doctor for professional evaluation.'),
+    /* if its unrecognized ask for apology*/
+    nl,
+    undo.
+
+/* syndromic assumptions about the infectious diseases diagnosis*/
+postulate(bacterial_pneumonia):- bacterial_pneumonia, !.
+postulate(viral_pneumonia):- viral_pneumonia, !.
+postulate(ebola):- ebola, !.
+postulate(flu):- flu, !.
+postulate(cold):- cold, !.
+postulate(measles):- measles, !.
+postulate(chickenpox):- chickenpox, !.
+postulate(ringworm):- ringworm, !.
+postulate(salmonella):- salmonella, !.
+postulate(hepatitis_A):- hepatitis_A, !.
+postulate(norovirus):- norovirus, !.
+postulate(shigella):- shigella, !.
+postulate(pink_eye):- pink_eye, !.
+postulate(mumps):- mumps, !.
+postulate(scabies):- scabies, !.
+postulate(unrecognized). /*unidentified diagnosis*/
+
+
+/* Syndromic Rules */
+
+bacterial_pneumonia :- assess(cough),assess(fever),assess(chest_pain),assess(nausea),
+    assess(shortness_of_breath),assess(fatigue),assess(pale_face),assess(confusion).
+
+viral_pneumonia :- assess(cough),assess(green_mucus),assess(fever),assess(nausea),
+    assess(wheezing),assess(muscle_pain),assess(malaise),assess(shaking),
+    assess(chills),assess(fatigue),assess(pale_face),assess(confusion).
+
+flu :- assess(fever),assess(head_ache),assess(chills),
+    assess(runny_nose),assess(body_ache).
+
+ebola :- assess(head_ache),assess(nausea),assess(extreme_rash),assess(fever),
+    assess(diarrhea),assess(vomiting),assess(stomach_pain),assess(muscle_pain),
+    assess(lymph_node_reaction), assess(yeast_infection),assess(skin_bleeding).
+
+cold :- assess(head_ache),assess(runny_nose),assess(sneezing),assess(congestion),
+    assess(red_eye),assess(fatigue),assess(sore_throat).
+
+measles :- assess(runny_nose),assess(fatigue),assess(muscle_pain),
+    assess(cough),assess(diarrhea),assess(sensitivity_to_light),
+    assess(sore_throat),assess(fever),assess(rash).
+
+chickenpox :- assess(fever), assess(blister),assess(fatigue),
+    assess(head_ache),assess(sore_throat),assess(flu_like),
+    assess(rash_on_palms_and_mouth).
+
+ringworm :- assess(ring_shaped_rash),assess(darkening_of_skin),
+    assess(hair_loss),assess(itchy_scalp),assess(stomach_pain).
+    
+salmonella :- assess(stomach_pain),assess(muscle_pain), assess(chills),
+    assess(dehydration), assess(bloody_stool), assess(head_ache),
+    assess(nausea), assess(fever), assess(diarrhea).
+
+
+hepatitis_A :- assess(nausea), assess(stomach_pain),assess(muscle_pain),
+    assess(joint_pain), assess(diarrhea), assess(fatigue),
+    assess(dark_urine), assess(weight_loss), assess(itching),
+    assess(jaundice), assess(fever).
+
+norovirus :- assess(nausea), assess(vomiting), assess(stomach_pain),
+    assess(malaise), assess(muscle_pain), assess(fever),
+    assess(diarrhea).
+
+shigella :- assess(bloody_diarrhea), assess(fever), assess(stomach_pain).
+
+pink_eye :- assess(red_eye), assess(eye_pain), assess(itching),
+    assess(sensitivity_to_light), assess(congestion),
+    assess(runny_nose), assess(puffy_eyes), assess(watery_eyes),
+    assess(sneezing), assess(eye_irritation), assess(eye_discharge).
+
+mumps :- assess(pain_in_jaw), assess(muscle_pain), assess(stomach_pain),
+    assess(neck_pain), assess(genital_pain), assess(swlling_of_ear),
+    assess(sore_threat), assess(malaise), assess(sore_throat),
+    assess(head_ache), assess(salivary_glands_pain), assess(fever).
+ 
+scabies :- assess(itchy_rash), assess(bumps), assess(redness_in_skin).
+
+/* assess function */
+/*assert is a meta-predicate that adds its single argument, which may be a fact or a rule, to the Prolog database.*/
+
+assess(Symptom) :-(yes(Symptom) ->  true ;( no(Symptom)->  fail ; ask(Symptom))).
+undo :- retract(yes(_)), fail.
+undo :- retract(no(_)),fail.
+undo.
+    
+/* Query Time! */
+
+ask(Input) :-
+write('Does your patient have: '),write(Input), write('? '),
+read(Advice),
+    nl,
+    ( (   Advice == yes; Advice == y;Advice == oui) -> assert(yes(Input)); assert(no(Input)), fail).
+
+:- dynamic yes/1,no/1.
+    
+    
+    
+  
+   
+    
+    
+    
+    
+    
